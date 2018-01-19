@@ -1,11 +1,32 @@
 # Treasy desafio backend
 
-Criar o back end de uma aplicação para representar uma estrutura de arvore. A aplicação deverá conter métodos REST para
-exibir a estrutura, adicionar, editar e excluir os nós da arvore.
+Criar o back end de uma aplicação para representar uma estrutura de arvore. A aplicação deverá conter métodos REST para exibir a estrutura, adicionar, editar e excluir os nós da arvore.
+
+#### Importante
+
+>
+> O ambiente de desenvolvimento foi configurado em sistema com base Unix, Mac e Linux, ou seja, pode haver divergência caso seja utilizado o Windows para desenvovlimento, dessa forma, caso seja extremamente necessário que se desenvolva nessa plataforma, as configurações podem variar, porém, não pude fazer os testes e nem tenho a pretenção de fazê-los para desenvolvimento em Windows.
+>
 
 ## Setup
 
-Main tasks
+Para preparar o ambiente de desenvolvimento, é necessário gerar as variáveis de ambiente para a conexão com o banco de dados que são:
+
+```shell
+export DATABASE_URL=localhost:5432/treasy
+export DATABASE_USER=postgres
+export DATABASE_PASSWORD=123456
+
+Para testes
+
+export DATABASE_TEST_URL=localhost:5432/treasy_test
+```
+
+Para baixar as dependências
+
+```shell
+./gradle build
+```
 
 ### Application tasks
 
@@ -22,6 +43,12 @@ Run the project with support for auto-detecting main class and reloading static 
 ```
 
 Compila e testa o projeto
+
+Executar apenas os testes
+
+```shell
+./gradlew test --debug
+```
 
 #### Opcional
 
@@ -86,7 +113,7 @@ All tasks runnable from root project
 
 ## Deploy Tomcat 9 com o Docker
 
-Para criar o ambiente de deploy, o projeto tem a opção de utilizar o [docker](https://www.docker.com/community-edition#/download) para criar o container com o tomcat 9, para isso, o docker precisa estar instalado e configurado no sistema.
+Para criar o ambiente de produção, utilizar o [docker](https://www.docker.com/community-edition#/download) com tomcat 9 e, para isso, o docker precisa estar instalado e configurado no sistema.
 
 ### Modo principal
 
@@ -128,10 +155,10 @@ Conteúdo do arquivo
     <Valve className="org.apache.catalina.valves.RemoteAddrValve" allow="^.*$" />
 </Context>
 ```
-3. Parar e ```./bin/catalina.sh start``` iniciar novamente ```./bin/catalina.sh start```
+3. Parar ```./bin/catalina.sh stop``` iniciar novamente ```./bin/catalina.sh start```
 4. Acessar pelo navegador para testar ```http://endereco```
 
-Após realizar as configurações necessários, para persistílas, é necessário realizar o commit da imagem, para isso, siga os seguintes passos:
+Após realizar as configurações necessários, para gravá-las, é necessário realizar o commit da imagem, para isso, siga os seguintes passos:
 
 1. Saia do container utilizando simultaneamente as teclas ```ctrl + p + q```
 2. ```docker ps``` para visualizar o container id

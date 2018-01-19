@@ -30,3 +30,4 @@ tomcat/war/host-manager/
 tomcat/war/manager/
 tomcat/war/treasyapi-0.1.0/
 tomcat/war/*.war
+postgres/data/
