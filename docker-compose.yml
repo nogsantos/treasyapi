@@ -1,0 +1,37 @@
+version: '2'
+
+services:
+  tomcat_server:
+    build: tomcat
+    ports:
+      - "80:8080"
+    tty: true
+    restart: unless-stopped
+    links:
+      - "postgresql:database"
+    environment:
+      - PORT=8080
+      - DATABASE_HOST=postgresql
+      - DATABASE_PORT=5432
+      - DATABASE_USER=postgres
+      - DATABASE_PASSWORD=123456
+      - DATABASE_DB=treasy
+      - DATABASE_URL=postgresql:5432/treasy
+      - TOKEN_MOBILE_REQUEST=9283257b41d3f3a310e4107ca4457dd0ed2098fd
+      - FIREBASE_ADDRESS=https://projeto-android-client.firebaseio.com
+    volumes:
+      - ./tomcat/war:/usr/local/tomcat/webapps:rw
+    command: ["catalina.sh", "run"]
+
+  postgresql:
+    image: nogsantos/postgres
+    restart: unless-stopped
+    ports:
+      - "5432:5432"
+    environment:
+      - DEBUG=false
+      - PG_PASSWORD=123456
+      - DB_NAME=treasy
+    volumes:
+      - ./postgres/scripts:/scripts:rw
+      - ./postgres/data:/var/lib/postgresql:rw

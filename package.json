@@ -1,0 +1,28 @@
+{
+  "name": "treasyapi",
+  "version": "0.1.0",
+  "description": "Treasy api test",
+  "scripts": {
+    "test": "./node_modules/.bin/serve ./build/reports/tests/test/ -p 8000 -o .",
+    "doc": "./node_modules/.bin/serve ./build/docs/javadoc/ -p 8000 -o ."
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/nogsantos/treasyapi.git"
+  },
+  "keywords": [
+    "Api",
+    "Java",
+    "Gradle",
+    "Spring boot"
+  ],
+  "author": "Fabricio Nogueira",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/nogsantos/treasyapi/issues"
+  },
+  "homepage": "https://github.com/nogsantos/treasyapi#readme",
+  "devDependencies": {
+    "serve": "^6.4.8"
+  }
+}

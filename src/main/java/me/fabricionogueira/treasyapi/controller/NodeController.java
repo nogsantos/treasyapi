@@ -18,7 +18,9 @@ public class NodeController {
     @Autowired
     NodeRepository nodeRepository;
     /**
-     * Get All Nodes
+     * Get All
+     *
+     * @return A List of Nodes
      */
     @GetMapping("/nodes")
     public List<Node> getAllNodes() {
@@ -26,6 +28,9 @@ public class NodeController {
     }
     /**
      * Create a new Note
+     *
+     * @param node node attributes from RequestBody
+     * @return Long
      */
     @PostMapping("/node")
     public Long createNote(@Valid @RequestBody Node node) {
@@ -38,6 +43,9 @@ public class NodeController {
     }
     /**
      * Get a Single Note
+     *
+     * @param nodeId The node id
+     * @return Node entity
      */
     @GetMapping("/node/{id}")
     public ResponseEntity<Node> getNodeById(@PathVariable(value = "id") Long nodeId) {
@@ -49,6 +57,10 @@ public class NodeController {
     }
     /**
      * Update a Note
+     *
+     * @param nodeId The node id
+     * @param nodeDetails Node attributes
+     * @return Node entity
      */
     @PutMapping("/node/{id}")
     public ResponseEntity<Node> updateNote(@PathVariable(value = "id") Long nodeId, @Valid @RequestBody Node nodeDetails) {
@@ -66,6 +78,9 @@ public class NodeController {
     }
     /**
      * Delete a Note
+     *
+     * @param nodeId The node id
+     * @return Node entity
      */
     @DeleteMapping("/node/{id}")
     public ResponseEntity<Node> deleteNote(@PathVariable(value = "id") Long nodeId) {
