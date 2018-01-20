@@ -89,14 +89,14 @@ public class Node implements Serializable {
      * @return the createdAt
      */
     public Date getCreatedAt() {
-        return createdAt;
+        return created_at;
     }
 
     /**
      * @return the updatedAt
      */
     public Date getUpdatedAt() {
-        return updatedAt;
+        return updated_at;
     }
 
     /**
@@ -131,14 +131,14 @@ public class Node implements Serializable {
      * @param createdAt the createdAt to set
      */
     public void setCreatedAt(Date createdAt) {
-        this.createdAt = createdAt;
+        this.created_at = createdAt;
     }
 
     /**
      * @param updatedAt the updatedAt to set
      */
     public void setUpdatedAt(Date updatedAt) {
-        this.updatedAt = updatedAt;
+        this.updated_at = updatedAt;
     }
 
     /**
@@ -172,14 +172,14 @@ public class Node implements Serializable {
     /**
      * @return the parent_id
      */
-    public Long getParent_id() {
+    public Long getParentId() {
         return parent_id;
     }
 
     /**
      * @param parent_id the parent_id to set
      */
-    public void setParent_id(Long parent_id) {
+    public void setParentId(Long parent_id) {
         this.parent_id = parent_id;
     }
 

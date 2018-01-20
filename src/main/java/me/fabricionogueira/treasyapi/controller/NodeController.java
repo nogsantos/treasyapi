@@ -2,12 +2,15 @@ package me.fabricionogueira.treasyapi.controller;
 
 import me.fabricionogueira.treasyapi.model.Node;
 import me.fabricionogueira.treasyapi.repository.NodeRepository;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+
 import javax.validation.Valid;
 import java.util.List;
+
 /**
  *
  */
@@ -17,6 +20,7 @@ public class NodeController {
 
     @Autowired
     NodeRepository nodeRepository;
+
     /**
      * Get All
      *
@@ -26,21 +30,25 @@ public class NodeController {
     public List<Node> getAllNodes() {
         return nodeRepository.findAll();
     }
+
     /**
      * Create a new Note
      *
+	 * @todo Corrigir o retorno
+	 *
      * @param node node attributes from RequestBody
-     * @return Long
+	 * @return ResponseEntity<String> string
      */
     @PostMapping("/node")
-    public Long createNote(@Valid @RequestBody Node node) {
-        if(node.getParent_id() != null){
-            Node parent = nodeRepository.findOne(node.getParent_id());
+	public ResponseEntity<String> createNote(@Valid @RequestBody Node node) {
+		if (node.getParentId() != null) {
+			Node parent = nodeRepository.findOne(node.getParentId());
             node.setParent(parent);
         }
         Node new_node = nodeRepository.save(node);
-        return new_node.getId();
+		return ResponseEntity.ok().body("[{id:"+ new_node.getId()+"}]");
     }
+
     /**
      * Get a Single Note
      *
@@ -55,6 +63,7 @@ public class NodeController {
         }
         return ResponseEntity.ok().body(node);
     }
+
     /**
      * Update a Note
      *
@@ -63,7 +72,8 @@ public class NodeController {
      * @return Node entity
      */
     @PutMapping("/node/{id}")
-    public ResponseEntity<Node> updateNote(@PathVariable(value = "id") Long nodeId, @Valid @RequestBody Node nodeDetails) {
+	public ResponseEntity<Node> updateNote(@PathVariable(value = "id") Long nodeId,
+			@Valid @RequestBody Node nodeDetails) {
         Node node = nodeRepository.findOne(nodeId);
         if (node == null) {
             return ResponseEntity.notFound().build();
@@ -76,6 +86,7 @@ public class NodeController {
         Node updatedNote = nodeRepository.save(node);
         return ResponseEntity.ok(updatedNote);
     }
+
     /**
      * Delete a Note
      *
