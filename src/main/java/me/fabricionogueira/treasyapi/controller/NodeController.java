@@ -94,7 +94,7 @@ public class NodeController {
 	@PutMapping("/node/{id}")
 	public ResponseEntity<Hashtable<String, Long>> updateNote(@PathVariable(value = "id") Long nodeId,
 			@Valid @RequestBody Node nodeDetails) {
-		Node node = nodeRepository.findOne(nodeId);
+		Node node = this.nodeRepository.findOne(nodeId);
 		if (node == null) {
 			return ApiResponse.getInstance().notFound();
 		}
@@ -103,13 +103,13 @@ public class NodeController {
 		node.setDetail(nodeDetails.getDetail());
 		node.setParentId(nodeDetails.getParentId());
 
-		if (NodeService.selfParentAvoid(node)) {
-			Node parent = nodeRepository.findOne(nodeDetails.getParentId());
+		if (NodeService.isSelfParent(node) && NodeService.incestCheck(node, this.nodeRepository)) {
+			Node parent = this.nodeRepository.findOne(nodeDetails.getParentId());
 			node.setParentId(parent.getId());
 			node.setParent(parent);
 		}
 
-		return ApiResponse.getInstance().ok(this.response("id", nodeRepository.save(node).getId()));
+		return ApiResponse.getInstance().ok(this.response("id", this.nodeRepository.save(node).getId()));
 	}
 
 	/**

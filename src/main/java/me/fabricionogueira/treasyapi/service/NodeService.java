@@ -1,5 +1,7 @@
 package me.fabricionogueira.treasyapi.service;
 
+import java.util.Collection;
+
 import me.fabricionogueira.treasyapi.model.Node;
 import me.fabricionogueira.treasyapi.repository.NodeRepository;
 
@@ -13,9 +15,9 @@ public class NodeService {
 	 * @param Node
 	 * @return boolean
 	 */
-	public static boolean selfParentAvoid(Node node) {
+	public static boolean isSelfParent(Node node) {
 		try {
-			return node.getParentId() != node.getId();
+			return node.getParentId() != null && (node.getParentId() != node.getId());
 		} catch (NullPointerException e) {
 			return false;
 		}
@@ -30,9 +32,17 @@ public class NodeService {
 	 * @param Long id
 	 * @return boolean
 	 */
-	public static boolean incestCheck(Node node, Node parent, NodeRepository repository) {
-		// repository.findAll("", node.getParentId());
-
-		return false;
+	public static boolean incestCheck(Node node, NodeRepository repository) {
+		Collection<Node> childrens = repository.findById(node.getId());
+		for (Node c : childrens) {
+			if (c.getChildrens().size() > 0) {			
+				for(Node l : c.getChildrens()){
+					if(l.getId() == node.getId()){
+						return false;
+					}				
+				}
+			}
+		}
+		return true;
 	}
 }

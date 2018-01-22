@@ -96,17 +96,23 @@ public class NodeControllerTest {
 
 	@Test
 	public void selfParentAvoid() throws Exception {
+		this.node.setId(1l);
 		this.node.setParentId(1l); // same value
-		assertThat(NodeService.selfParentAvoid(this.node)).isEqualTo(false);
+		assertThat(NodeService.isSelfParent(this.node)).isEqualTo(false);
 		this.node.setParentId(null); // null value
-		assertThat(NodeService.selfParentAvoid(this.node)).isEqualTo(false);
-		this.node.setParentId(2l); // diferent value
-		assertThat(NodeService.selfParentAvoid(this.node)).isEqualTo(true);
+		assertThat(NodeService.isSelfParent(this.node)).isEqualTo(false);
+		this.node.setParentId(1002l); // diferent value
+		assertThat(NodeService.isSelfParent(this.node)).isEqualTo(true);
 	}
 
 	@Test
 	public void incestCheck() throws Exception {
-		// Verificar se um filho pretende ser pai de seu próprio pai
+		Node node = new Node();
+		node.setCode("TESTE-3");
+		node.setDescription("Teste description");
+		node.setDetail("Test details");
+		node.setParentId(1l);
+		NodeService.incestCheck(node, this.nodeRepository);
 
 	}
 
