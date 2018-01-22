@@ -1,6 +1,20 @@
 package me.fabricionogueira.treasyapi.controller;
 
+import static org.hamcrest.Matchers.is;
+import static org.junit.Assert.assertNotNull;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppContextSetup;
+
+import java.io.IOException;
+import java.nio.charset.Charset;
+import java.util.Arrays;
+
 import org.junit.Before;
+import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -12,23 +26,11 @@ import org.springframework.mock.http.MockHttpOutputMessage;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.web.context.WebApplicationContext;
+import static org.assertj.core.api.Assertions.*;
 
 import me.fabricionogueira.treasyapi.model.Node;
 import me.fabricionogueira.treasyapi.repository.NodeRepository;
-
-import java.io.IOException;
-import java.nio.charset.Charset;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
-import static org.hamcrest.Matchers.*;
-import static org.junit.Assert.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
-import static org.springframework.test.web.servlet.setup.MockMvcBuilders.*;
-
-import org.junit.Test;
+import me.fabricionogueira.treasyapi.service.NodeService;
 
 /**
  * @author Fabricio Nogueira
@@ -44,7 +46,6 @@ public class NodeControllerTest {
 	private MockMvc mockMvc;
 	private Node node;
 	private HttpMessageConverter mappingJackson2HttpMessageConverter;
-	private List<Node> nodeList = new ArrayList<>();
 
 	@Autowired
 	private NodeRepository nodeRepository;;
@@ -71,17 +72,16 @@ public class NodeControllerTest {
 
 	@Test
 	public void nodeNotFound() throws Exception {
-		mockMvc.perform(get("/node/123456").contentType(contentType)).andExpect(status().isNotFound());
+		mockMvc.perform(get("/node/123456").contentType(contentType)).andExpect(status().isNoContent());
 	}
 
 	@Test
 	public void readSingleNode() throws Exception {
-	  mockMvc.perform(get("/node/" + this.node.getId())).andExpect(status().isOk())
-	      .andExpect(content().contentType(contentType))
-	      .andExpect(jsonPath("$.id", is(this.node.getId().intValue())))
-	      .andExpect(jsonPath("$.code", is("TEST-1")))
-	      .andExpect(jsonPath("$.description", is("Test description")))
-	      .andExpect(jsonPath("$.detail", is("Test detail")));
+		mockMvc.perform(get("/node/" + this.node.getId())).andExpect(content().contentType(contentType))
+				.andExpect(jsonPath("$.id", is(this.node.getId().intValue())))
+				.andExpect(jsonPath("$.code", is("TEST-1")))
+				.andExpect(jsonPath("$.description", is("Test description")))
+				.andExpect(jsonPath("$.detail", is("Test detail"))).andExpect(status().isCreated());
 	}
 
 	@Test
@@ -91,9 +91,28 @@ public class NodeControllerTest {
 		node.setDescription("Teste description");
 		node.setDetail("Test details");
 		String nodeJson = json(node);
-		this.mockMvc.perform(post("/node").contentType(contentType).content(nodeJson)).andExpect(status().isOk());
+		this.mockMvc.perform(post("/node").contentType(contentType).content(nodeJson)).andExpect(status().isCreated());
 	}
 
+	@Test
+	public void selfParentAvoid() throws Exception {
+		this.node.setParentId(1l); // same value
+		assertThat(NodeService.selfParentAvoid(this.node)).isEqualTo(false);
+		this.node.setParentId(null); // null value
+		assertThat(NodeService.selfParentAvoid(this.node)).isEqualTo(false);
+		this.node.setParentId(2l); // diferent value
+		assertThat(NodeService.selfParentAvoid(this.node)).isEqualTo(true);
+	}
+
+	@Test
+	public void incestCheck() throws Exception {
+		// Verificar se um filho pretende ser pai de seu próprio pai
+
+	}
+
+	/**
+	 *
+	 */
 	protected String json(Object o) throws IOException {
 		MockHttpOutputMessage mockHttpOutputMessage = new MockHttpOutputMessage();
 		this.mappingJackson2HttpMessageConverter.write(o, MediaType.APPLICATION_JSON, mockHttpOutputMessage);

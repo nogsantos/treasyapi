@@ -5,6 +5,7 @@ import org.hibernate.annotations.NotFoundAction;
 import org.hibernate.validator.constraints.NotBlank;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
@@ -43,8 +44,8 @@ public class Node implements Serializable {
     @JoinColumn(name = "parent", insertable = true, updatable = true)
     private Node parent;
 
-    @JsonSerialize(include = JsonSerialize.Inclusion.NON_EMPTY)//Avoiding empty json arrays.objects
-    @OneToMany(mappedBy = "parent", fetch = FetchType.EAGER)
+	@JsonSerialize(include = JsonSerialize.Inclusion.NON_EMPTY)//Avoiding to show empty json arrays.objects
+    @OneToMany(mappedBy = "parent", fetch = FetchType.EAGER, cascade = CascadeType.REMOVE)
     private Collection<Node> childrens;
 
     @Column(nullable = false, updatable = false)

@@ -1,48 +1,62 @@
 # Treasy desafio backend
 
-Criar o back end de uma aplicação para representar uma estrutura de arvore. A aplicação deverá conter métodos REST para exibir a estrutura, adicionar, editar e excluir os nós da arvore.
+Aplicação para representar uma estrutura de arvore. A aplicação contém métodos REST para exibir a estrutura, é possível adicionar, editar ou excluir os nós da arvore.
 
 #### Importante
 
 >
 > O ambiente de desenvolvimento foi configurado em sistema com base Unix, Mac e Linux, ou seja, pode haver divergência caso seja utilizado o Windows para desenvovlimento, dessa forma, caso seja extremamente necessário que se desenvolva nessa plataforma, as configurações podem variar, porém, não pude fazer os testes e nem tenho a pretenção de fazê-los para desenvolvimento em Windows.
 >
+> Dessa forma, todas as configurações foram realizadas utilizando a linha de comando.
+>
 
 ## Setup
 
-Para preparar o ambiente de desenvolvimento, é necessário gerar as variáveis de ambiente para a conexão com o banco de dados que são:
+Para preparar o ambiente de desenvolvimento, é necessário gerar as variáveis de ambiente para a conexão com o banco de dados e baixar as dependências do projeto
 
-```shell
-export DATABASE_URL=localhost:5432/treasy
-export DATABASE_USER=postgres
-export DATABASE_PASSWORD=123456
+##### Variáveis de ambiente
+
+```text
+- DATABASE_URL=localhost:5432/treasy
+- DATABASE_USER=postgres
+- DATABASE_PASSWORD=123456
 
 Para testes
 
-export DATABASE_TEST_URL=localhost:5432/treasy_test
+- DATABASE_TEST_URL=localhost:5432/treasy_test
 ```
 
-Para baixar as dependências
+##### Dependências do projeto
 
-```shell
+```text
 ./gradle build
 ```
 
-### Application tasks
+Para gerar as variáveis, basta apenas executar o comando:
+
+```shell
+./setup.sh
+```
+
+> Ps.: As variáveis de sessão serão criadas apenas para a sessão do terminal em questão.
+
+### Iniciar para desenvolvimento
+
+Executar o projeto com suporte para auto-detecção da classe principal e recarregando recursos estáticos
 
 ```shell
 ./gradle bootRun
 ```
 
-Run the project with support for auto-detecting main class and reloading static resources
+> Para desenvolvimento utilizando o [Visual Studio Code](https://code.visualstudio.com/) o debug está configurado, basta apenas executá-lo.
 
 ### Build
+
+Compila e testa o projeto
 
 ```shell
 ./gradlew build
 ```
-
-Compila e testa o projeto
 
 Executar apenas os testes
 
@@ -63,7 +77,7 @@ Executar apenas os testes
 
 ## Available Tasks
 
-All tasks runnable from root project
+Todas as tarefas devem ser executadas à partir da base do projeto ```./```
 
 ### Build tasks
 
