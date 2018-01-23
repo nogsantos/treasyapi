@@ -40,7 +40,7 @@ public class NodeController {
 	@GetMapping("/nodes")
 	public ResponseEntity<List<Node>> getAllNodes() {
 		try {
-			return ApiResponse.getInstance().list(nodeRepository.findAll());
+			return ApiResponse.getInstance().list(nodeRepository.findAllByOrderByIdDesc());
 		} catch (StackOverflowError e) {
 			System.out.println(e.getClass().getCanonicalName());
 		}
@@ -57,13 +57,12 @@ public class NodeController {
 	 */
 	@PostMapping("/node")
 	public ResponseEntity<Hashtable<String, Long>> createNote(@Valid @RequestBody Node node) {
-		if (node.getParentId() != null) {
-			Node parent = nodeRepository.findOne(node.getParentId());
+		if (node.getParent() != null) {
+			Node parent = nodeRepository.findOne(node.getParent().getId());
 			if (parent != null) {
-				node.setParentId(parent.getId());
 				node.setParent(parent);
 			} else {
-				node.setParentId(null);
+				node.setParent(null);
 			}
 		}
 		return ApiResponse.getInstance().ok(this.response("id", nodeRepository.save(node).getId()));
@@ -101,12 +100,14 @@ public class NodeController {
 		node.setCode(nodeDetails.getCode());
 		node.setDescription(nodeDetails.getDescription());
 		node.setDetail(nodeDetails.getDetail());
-		node.setParentId(nodeDetails.getParentId());
 
-		if (NodeService.isSelfParent(node) && NodeService.incestCheck(node, this.nodeRepository)) {
-			Node parent = this.nodeRepository.findOne(nodeDetails.getParentId());
-			node.setParentId(parent.getId());
-			node.setParent(parent);
+		nodeDetails.setId(nodeId);
+
+		if (NodeService.isSelfParent(nodeDetails)) {
+			if (!NodeService.isDescendant(nodeDetails, this.nodeRepository)) {
+				Node parent = this.nodeRepository.findOne(nodeDetails.getParent().getId());
+				node.setParent(parent);
+			}
 		}
 
 		return ApiResponse.getInstance().ok(this.response("id", this.nodeRepository.save(node).getId()));

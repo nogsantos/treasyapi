@@ -1,7 +1,5 @@
 package me.fabricionogueira.treasyapi.service;
 
-import java.util.Collection;
-
 import me.fabricionogueira.treasyapi.model.Node;
 import me.fabricionogueira.treasyapi.repository.NodeRepository;
 
@@ -17,32 +15,44 @@ public class NodeService {
 	 */
 	public static boolean isSelfParent(Node node) {
 		try {
-			return node.getParentId() != null && (node.getParentId() != node.getId());
+			return node.getParent() != null && (node.getParent().getId() != node.getId());
 		} catch (NullPointerException e) {
 			return false;
 		}
 	}
 
 	/**
-	 * Um pai não pode ser filho de seu filho
+	 * Um pai não pode ser filho de seu filho ou seus decendentes
 	 *
-	 * @todo
 	 *
-	 * @param Long parent
-	 * @param Long id
+	 * @param Node node
+	 * @param NodeRepository repository
 	 * @return boolean
 	 */
-	public static boolean incestCheck(Node node, NodeRepository repository) {
-		Collection<Node> childrens = repository.findById(node.getId());
-		for (Node c : childrens) {
-			if (c.getChildrens().size() > 0) {			
-				for(Node l : c.getChildrens()){
-					if(l.getId() == node.getId()){
-						return false;
-					}				
-				}
+	public static boolean isDescendant(Node node, NodeRepository repository) {
+		return search(repository.findOne(node.getId()), node.getParent().getId());
+	}
+
+	/**
+	 * Realiza a busca na árvore comparando os valores.
+	 *
+	 *
+	 * @param Node node
+	 * @param Long parentId
+	 * @return boolean
+	 */
+	private static boolean search(Node node, Long parentId) {
+		return node.getChildrens().stream().anyMatch(chidren -> {
+			if (chidren.getId() == parentId) {
+				return true;
+			} else {
+				return (chidren.getChildrens().size() > 0) ? search(chidren, parentId) : false;
+				// if (chidren.getChildrens().size() > 0) {
+				// 	return search(chidren, parentId);
+				// } else {
+				// 	return false;
+				// }
 			}
-		}
-		return true;
+		});
 	}
 }
