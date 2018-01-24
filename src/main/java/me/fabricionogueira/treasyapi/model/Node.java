@@ -23,9 +23,7 @@ import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
-import org.hibernate.annotations.OrderBy;
 import org.hibernate.validator.constraints.NotBlank;
-import org.springframework.core.annotation.Order;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -38,7 +36,6 @@ public class Node implements Serializable {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	// @OrderBy(this.id desc)
 	private Long id;
 
 	@NotBlank
@@ -50,12 +47,12 @@ public class Node implements Serializable {
 	@NotBlank
 	private String detail;
 
-	@ManyToOne(fetch = FetchType.LAZY)
+	@ManyToOne
 	@JoinColumn(name = "parent", insertable = true, updatable = true)
 	@JsonBackReference
 	private Node parent;
 
-	@OneToMany(mappedBy = "parent", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
+	@OneToMany(mappedBy = "parent", fetch = FetchType.EAGER, cascade = CascadeType.REMOVE)
 	@JsonSerialize(include = JsonSerialize.Inclusion.NON_EMPTY)
 	@JsonManagedReference
 	private Collection<Node> childrens;

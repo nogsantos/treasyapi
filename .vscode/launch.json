@@ -18,13 +18,13 @@
 				"DB_USER":"postgres",
 				"DB_PASSWORD":"123456"
 			}
-        },
+		},
         {
             "type": "java",
             "name": "Debug (Attach)",
             "request": "attach",
-            "hostName": "localhost",
-            "port": 0
+            "hostName": "127.0.0.1",
+            "port": 8080
         }
     ]
 }

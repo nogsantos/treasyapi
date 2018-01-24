@@ -1,5 +1,6 @@
 package me.fabricionogueira.treasyapi.service;
 
+import java.util.Hashtable;
 import me.fabricionogueira.treasyapi.model.Node;
 import me.fabricionogueira.treasyapi.repository.NodeRepository;
 
@@ -7,19 +8,6 @@ import me.fabricionogueira.treasyapi.repository.NodeRepository;
  * Layer para as regras de negócio
  */
 public class NodeService {
-	/**
-	 * Confirma se o pai não está vazio e se o pai informado não é o mesmo id do nó
-	 *
-	 * @param Node
-	 * @return boolean
-	 */
-	public static boolean isSelfParent(Node node) {
-		try {
-			return node.getParent() != null && (node.getParent().getId() != node.getId());
-		} catch (NullPointerException e) {
-			return false;
-		}
-	}
 
 	/**
 	 * Um pai não pode ser filho de seu filho ou seus decendentes
@@ -47,12 +35,22 @@ public class NodeService {
 				return true;
 			} else {
 				return (chidren.getChildrens().size() > 0) ? search(chidren, parentId) : false;
-				// if (chidren.getChildrens().size() > 0) {
-				// 	return search(chidren, parentId);
-				// } else {
-				// 	return false;
-				// }
 			}
 		});
+	}
+
+	/**
+	 * Defina a estrutura para a resposta (Valor único)
+	 *
+	 * @param <T>
+	 *
+	 * @param String key
+	 * @param T body
+	 * @return Hashtable<String, T>
+	 */
+	public static <T> Hashtable<String, T> response(String key, T body) {
+		Hashtable<String, T> output = new Hashtable<String, T>();
+		output.put(key, body);
+		return output;
 	}
 }

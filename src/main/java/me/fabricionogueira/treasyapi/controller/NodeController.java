@@ -65,7 +65,7 @@ public class NodeController {
 				node.setParent(null);
 			}
 		}
-		return ApiResponse.getInstance().ok(this.response("id", nodeRepository.save(node).getId()));
+		return ApiResponse.getInstance().ok(NodeService.response("id", nodeRepository.save(node).getId()));
 	}
 
 	/**
@@ -103,14 +103,18 @@ public class NodeController {
 
 		nodeDetails.setId(nodeId);
 
-		if (NodeService.isSelfParent(nodeDetails)) {
+		if (nodeDetails.getParent() != null) {
 			if (!NodeService.isDescendant(nodeDetails, this.nodeRepository)) {
 				Node parent = this.nodeRepository.findOne(nodeDetails.getParent().getId());
-				node.setParent(parent);
+				if (parent != null && (parent.getId() != nodeDetails.getId())) {
+					node.setParent(parent);
+				} else {
+					node.setParent(null);
+				}
 			}
 		}
 
-		return ApiResponse.getInstance().ok(this.response("id", this.nodeRepository.save(node).getId()));
+		return ApiResponse.getInstance().ok(NodeService.response("id", this.nodeRepository.save(node).getId()));
 	}
 
 	/**
@@ -126,22 +130,7 @@ public class NodeController {
 			return ApiResponse.getInstance().notFound();
 		}
 		nodeRepository.delete(node);
-		return ApiResponse.getInstance().ok(this.response("Success", "Node deleted successfully"));
-	}
-
-	/**
-	 * Defina a estrutura para a resposta (Valor único)
-	 *
-	 * @param <T>
-	 *
-	 * @param String key
-	 * @param T body
-	 * @return Hashtable<String, T>
-	 */
-	private <T> Hashtable<String, T> response(String key, T body) {
-		Hashtable<String, T> output = new Hashtable<String, T>();
-		output.put(key, body);
-		return output;
+		return ApiResponse.getInstance().ok(NodeService.response("Success", "Node deleted successfully"));
 	}
 
 }

@@ -34,8 +34,16 @@ Para testes
 
 Para gerar as variáveis, basta apenas executar o comando:
 
+##### Mac
+
 ```shell
 ./setup.sh
+```
+
+##### Linux
+
+```shell
+. ./setup.sh
 ```
 
 > Ps.: As variáveis de sessão serão criadas apenas para a sessão do terminal em questão.
@@ -74,6 +82,10 @@ Executar apenas os testes
 >
 > Após realizar o build para a documentação ```./gradlew javadoc``` o site pode ser visualizada com o comando ```npm run doc```
 >
+
+##### Output
+
+![alt text][test_output]
 
 ## Available Tasks
 
@@ -180,3 +192,5 @@ Após realizar as configurações necessários, para gravá-las, é necessário 
 4. ```docker stop [container_id]``` para finalizar o container
 
 Com todas as edições e configurações necessárias realizadas, para subir o container: ```docker-compose up -d```
+
+[test_output]: http://res.cloudinary.com/nogsantos/image/upload/v1516801704/test-output_t51qxy.png "Amostra do resultado do teste"
