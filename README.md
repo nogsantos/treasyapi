@@ -193,4 +193,4 @@ Após realizar as configurações necessários, para gravá-las, é necessário 
 
 Com todas as edições e configurações necessárias realizadas, para subir o container: ```docker-compose up -d```
 
-[test_output]: http://res.cloudinary.com/nogsantos/image/upload/v1516801704/test-output_t51qxy.png "Amostra do resultado do teste"
+[test_output]: http://res.cloudinary.com/nogsantos/image/upload/v1516807486/test-output_ssk0cm.png "Amostra do resultado do teste"
