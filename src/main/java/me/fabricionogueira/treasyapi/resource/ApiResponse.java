@@ -1,17 +1,18 @@
 package me.fabricionogueira.treasyapi.resource;
 
-import java.util.List;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Component;
+
+import java.util.List;
+
+import static org.springframework.http.HttpStatus.*;
 
 /**
  * Respostas para as requisições
- *
  */
+@Component
 public class ApiResponse {
-
-	private static final ApiResponse INSTANCE = new ApiResponse();
 
 	private HttpHeaders responseHeaders;
 
@@ -24,20 +25,13 @@ public class ApiResponse {
 	}
 
 	/**
-	 * Acesso único
-	 */
-	public static ApiResponse getInstance() {
-		return INSTANCE;
-	}
-
-	/**
 	 * Generic response for list.
 	 *
-	 * @param <E> Element
+	 * @param E       <Element>
 	 * @param List<E> List values
 	 */
 	public <E> ResponseEntity<List<E>> list(List<E> entyties) {
-		return new ResponseEntity<List<E>>(entyties, this.responseHeaders, HttpStatus.OK);
+		return new ResponseEntity<List<E>>(entyties, this.responseHeaders, OK);
 	}
 
 	/**
@@ -47,26 +41,34 @@ public class ApiResponse {
 	 * @param <T> Body values of type
 	 */
 	public <T> ResponseEntity<T> ok(T body) {
-		return new ResponseEntity<T>((T) body, this.responseHeaders, HttpStatus.CREATED);
+		return new ResponseEntity<T>((T) body, this.responseHeaders, OK);
+	}
+
+	/**
+	 * Generic response for Object.
+	 *
+	 * @param <T> Type
+	 * @param <T> Body values of type
+	 */
+	public <T> ResponseEntity<T> created(T body) {
+		return new ResponseEntity<T>((T) body, this.responseHeaders, CREATED);
 	}
 
 	/**
 	 * Not found
 	 *
 	 * @param <T> Type
-	 *
 	 */
 	public <T> ResponseEntity<T> notFound() {
-		return new ResponseEntity<T>((T) null, this.responseHeaders, HttpStatus.NO_CONTENT);
+		return new ResponseEntity<T>((T) null, this.responseHeaders, NO_CONTENT);
 	}
 
 	/**
 	 * When request fail
 	 *
 	 * @param <T> Type
-	 *
 	 */
 	public <T> ResponseEntity<T> requestFail() {
-		return new ResponseEntity<T>((T) null, this.responseHeaders, HttpStatus.SERVICE_UNAVAILABLE);
+		return new ResponseEntity<T>((T) null, this.responseHeaders, SERVICE_UNAVAILABLE);
 	}
 }

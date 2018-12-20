@@ -1,55 +1,49 @@
 package me.fabricionogueira.treasyapi.service;
 
-import java.util.Hashtable;
 import me.fabricionogueira.treasyapi.model.Node;
-import me.fabricionogueira.treasyapi.repository.NodeRepository;
+import org.springframework.stereotype.Component;
+
+import java.util.Hashtable;
 
 /**
  * Layer para as regras de negócio
  */
+@Component
 public class NodeService {
 
 	/**
 	 * Um pai não pode ser filho de seu filho ou seus decendentes
 	 *
-	 *
-	 * @param Node node
-	 * @param NodeRepository repository
+	 * @param node   Node
+	 * @param target Node
 	 * @return boolean
 	 */
-	public static boolean isDescendant(Node node, NodeRepository repository) {
-		return search(repository.findOne(node.getId()), node.getParent().getId());
+	public boolean isDescendant(Node node, Node target) {
+		return search(node, target);
 	}
 
 	/**
 	 * Realiza a busca na árvore comparando os valores.
 	 *
-	 *
-	 * @param Node node
-	 * @param Long parentId
+	 * @param parent     Node
+	 * @param parentId Long
 	 * @return boolean
 	 */
-	private static boolean search(Node node, Long parentId) {
-		return node.getChildrens().stream().anyMatch(chidren -> {
-			if (chidren.getId() == parentId) {
-				return true;
-			} else {
-				return (chidren.getChildrens().size() > 0) ? search(chidren, parentId) : false;
-			}
-		});
+	private boolean search(Node node, Node target) {
+		return node.getChildrens().stream().anyMatch(children ->
+				children.getId().equals(target.getId()) || (children.getChildrens().size() > 0) && search(children, target)
+		);
 	}
 
 	/**
 	 * Defina a estrutura para a resposta (Valor único)
 	 *
-	 * @param <T>
-	 *
-	 * @param String key
-	 * @param T body
-	 * @return Hashtable<String, T>
+	 * @param key  String
+	 * @param body <T>
+	 * @return Hashtable
 	 */
-	public static <T> Hashtable<String, T> response(String key, T body) {
-		Hashtable<String, T> output = new Hashtable<String, T>();
+	public <T> Hashtable<String, T> response(String key, T body) {
+		Hashtable<String, T> output = new Hashtable<>();
 		output.put(key, body);
 		return output;
 	}

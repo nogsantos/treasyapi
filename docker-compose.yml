@@ -1,27 +1,8 @@
 version: '2'
 
 services:
-  tomcat_server:
-    build: tomcat
-    ports:
-      - "80:8080"
-    tty: true
-    restart: unless-stopped
-    links:
-      - "postgresql:database"
-    environment:
-      - PORT=8080
-      - DATABASE_HOST=postgresql
-      - DATABASE_PASSWORD=123456
-      - DATABASE_DB=treasy
-      - DB_USER=postgres
-      - DB_PORT=5432
-      - DB_URL=postgresql:5432/treasy
-    volumes:
-      - ./tomcat/war:/usr/local/tomcat/webapps:rw
-    command: ["catalina.sh", "run"]
-
   postgresql:
+    container_name: treasyapi_db
     image: nogsantos/postgres
     restart: unless-stopped
     ports:

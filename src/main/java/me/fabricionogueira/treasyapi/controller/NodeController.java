@@ -1,36 +1,44 @@
 package me.fabricionogueira.treasyapi.controller;
 
-import java.util.Hashtable;
-import java.util.List;
-
-import javax.validation.Valid;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-
 import me.fabricionogueira.treasyapi.model.Node;
 import me.fabricionogueira.treasyapi.repository.NodeRepository;
 import me.fabricionogueira.treasyapi.resource.ApiResponse;
 import me.fabricionogueira.treasyapi.service.NodeService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import javax.validation.Valid;
+import java.util.Hashtable;
+import java.util.List;
 
 /**
  * Node controller
- *
  */
 @RestController
 @RequestMapping("/")
 public class NodeController {
 
+	private NodeRepository nodeRepository;
+	private NodeService service;
+	private ApiResponse response;
+
 	@Autowired
-	NodeRepository nodeRepository;
+	public NodeController(NodeRepository nodeRepository, NodeService service, ApiResponse response) {
+		this.nodeRepository = nodeRepository;
+		this.service = service;
+		this.response = response;
+	}
+
+	/**
+	 * Get All
+	 *
+	 * @return A List of Nodes
+	 */
+	@GetMapping("/")
+	public ResponseEntity<String> hello() {
+		return response.ok("It's Alive");
+	}
 
 	/**
 	 * Get All
@@ -39,18 +47,11 @@ public class NodeController {
 	 */
 	@GetMapping("/nodes")
 	public ResponseEntity<List<Node>> getAllNodes() {
-		try {
-			return ApiResponse.getInstance().list(nodeRepository.findAllByOrderByIdDesc());
-		} catch (StackOverflowError e) {
-			System.out.println(e.getClass().getCanonicalName());
-		}
-		return ApiResponse.getInstance().requestFail();
+		return response.list(nodeRepository.findAllByOrderByIdDesc());
 	}
 
 	/**
 	 * Create a new Note
-	 *
-	 * @todo Corrigir o retorno
 	 *
 	 * @param node node attributes from RequestBody
 	 * @return ResponseEntity<Hashtable>
@@ -65,7 +66,7 @@ public class NodeController {
 				node.setParent(null);
 			}
 		}
-		return ApiResponse.getInstance().ok(NodeService.response("id", nodeRepository.save(node).getId()));
+		return response.created(service.response("id", nodeRepository.save(node).getId()));
 	}
 
 	/**
@@ -78,43 +79,45 @@ public class NodeController {
 	public ResponseEntity<Node> getNodeById(@PathVariable(value = "id") Long nodeId) {
 		Node node = nodeRepository.findOne(nodeId);
 		if (node == null) {
-			return ApiResponse.getInstance().notFound();
+			return response.notFound();
 		}
-		return ApiResponse.getInstance().ok(node);
+		return response.ok(node);
 	}
 
 	/**
 	 * Update a Note
 	 *
-	 * @param nodeId The node id
-	 * @param nodeDetails Node attributes
+	 * @param nodeId      The node id
+	 * @param bodyNode Node attributes
 	 * @return Node entity
 	 */
 	@PutMapping("/node/{id}")
 	public ResponseEntity<Hashtable<String, Long>> updateNote(@PathVariable(value = "id") Long nodeId,
-			@Valid @RequestBody Node nodeDetails) {
-		Node node = this.nodeRepository.findOne(nodeId);
+															  @Valid @RequestBody Node bodyNode) {
+
+		final Node node = nodeRepository.findOne(nodeId);
 		if (node == null) {
-			return ApiResponse.getInstance().notFound();
+			return response.notFound();
 		}
-		node.setCode(nodeDetails.getCode());
-		node.setDescription(nodeDetails.getDescription());
-		node.setDetail(nodeDetails.getDetail());
 
-		nodeDetails.setId(nodeId);
+		node.setCode(bodyNode.getCode());
+		node.setDescription(bodyNode.getDescription());
+		node.setDetail(bodyNode.getDetail());
 
-		if (nodeDetails.getParent() != null) {
-			if (!NodeService.isDescendant(nodeDetails, this.nodeRepository)) {
-				Node parent = this.nodeRepository.findOne(nodeDetails.getParent().getId());
-				if (parent != null && (parent.getId() != nodeDetails.getId())) {
+		bodyNode.setId(nodeId);
+
+		if (bodyNode.getParent() != null) {
+			final Node target = nodeRepository.findOne(node.getId());
+			if (!service.isDescendant(bodyNode, target)) {
+				final Node parent = nodeRepository.findOne(bodyNode.getParent().getId());
+				if (parent != null && (!parent.getId().equals(bodyNode.getId()))) {
 					node.setParent(parent);
 				} else {
 					node.setParent(null);
 				}
 			}
 		}
-
-		return ApiResponse.getInstance().ok(NodeService.response("id", this.nodeRepository.save(node).getId()));
+		return response.ok(service.response("id", nodeRepository.save(node).getId()));
 	}
 
 	/**
@@ -127,10 +130,9 @@ public class NodeController {
 	public ResponseEntity<Hashtable<String, String>> deleteNote(@PathVariable(value = "id") Long nodeId) {
 		Node node = nodeRepository.findOne(nodeId);
 		if (node == null) {
-			return ApiResponse.getInstance().notFound();
+			return response.notFound();
 		}
 		nodeRepository.delete(node);
-		return ApiResponse.getInstance().ok(NodeService.response("Success", "Node deleted successfully"));
+		return response.ok(service.response("Success", "Node deleted successfully"));
 	}
-
 }

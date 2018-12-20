@@ -1,19 +1,12 @@
 package me.fabricionogueira.treasyapi.repository;
 
-import java.util.List;
-
+import me.fabricionogueira.treasyapi.model.Node;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import me.fabricionogueira.treasyapi.model.Node;
+import java.util.List;
 
 @Repository
 public interface NodeRepository extends JpaRepository<Node, Long> {
-	/**
-	 * Order by id desc
-	 *
-	 */
-	public List<Node> findAllByOrderByIdDesc();
-
-
+	List<Node> findAllByOrderByIdDesc();
 }

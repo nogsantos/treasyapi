@@ -2,13 +2,10 @@
 
 echo Setting up
 
-export DB_URL="localhost:5432/treasy"
-
-export DB_TEST="localhost:5432/treasy_test"
-
-export DB_USER="postgres"
-
-export DB_PASSWORD="123456"
+export DB_URL=localhost:5432/treasy
+export DB_TEST=localhost:5432/treasy_test
+export DB_USER=postgres
+export DB_PASSWORD=123456
 
 echo Done!
 
